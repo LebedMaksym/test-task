@@ -1,11 +1,11 @@
 const path = require("path");
 const webpack = require("webpack");
 const { VueLoaderPlugin } = require("vue-loader");
-const HtmlWebpackPlugin = require("html-webpack-plugin")
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const Dotenv = require("dotenv-webpack");
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       filename: "index.html",
-      template: "src/index.html"
+      template: "public/index.html"
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
@@ -92,4 +92,4 @@ module.exports = {
     port: 8080
   },
   devtool: process.env.NODE_ENV !== "production" ? "eval-cheap-source-map" : false
-}
+};

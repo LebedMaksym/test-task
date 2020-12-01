@@ -3,6 +3,7 @@
     <div class="d-flex justify-space-between align-center">
       <div class="d-flex align-center">
         <base-button
+          :is-disabled="disableButton"
           :color="btnDetails.color"
           :border-color="btnDetails.color"
           class="mr-3"
@@ -34,7 +35,7 @@
       </div>
       <div
         v-if="showDuration"
-        class="player-song-item__duration"
+        class="player-song-item__duration ml-3"
       >
         {{ $parseDuration(track.duration_ms) }}
       </div>
@@ -43,9 +44,9 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator"
+import { Component, Prop, Vue } from "vue-property-decorator";
 import BaseButton from "@/components/BaseButton.vue";
-import {SpotifyTrack} from "@/models/SpotifyModels";
+import { SpotifyTrack } from "@/models/SpotifyModels";
 import player from "@/store/modules/player";
 
 interface BtnDetails {
@@ -60,34 +61,40 @@ interface BtnDetails {
 })
 export default class PlayerSongItem extends Vue {
   @Prop() track!: SpotifyTrack
-  @Prop({default: true, type: Boolean}) showDuration! : boolean
+  @Prop({ default: true, type: Boolean }) showDuration! : boolean
 
   get isCurrentTrack(): boolean {
-    return this.track.id === this.currentTrackId
+    return this.track.id === this.currentTrackId;
   }
 
   get isSongPlaying(): boolean {
-    return player.isSongPlaying
+    return player.isSongPlaying;
+  }
+
+  get disableButton(): boolean {
+    return !player.currentDeviceId || player.isLoading;
   }
 
   get btnDetails(): BtnDetails {
     return {
       icon: this.isCurrentTrack && this.isSongPlaying ? "pause" : "play_arrow",
       color: this.isCurrentTrack && this.isSongPlaying ? "blue" : "#1DB954"
-    }
+    };
   }
 
   get currentTrackId(): string {
     if (player.currentTrack) {
-      return player.currentTrack.id
-    } else return ""
+      return player.currentTrack.id;
+    } else {
+      return "";
+    }
   }
 
   get image(): string {
     try {
-      return this.track.album.images[0].url
+      return this.track.album.images[0].url;
     } catch {
-      return ""
+      return "";
     }
   }
 }
@@ -103,6 +110,9 @@ export default class PlayerSongItem extends Vue {
   &__name {
     color: white;
   }
+  &__artist {
+    color: #c2c2c2;
+  }
 
   &__image {
     height: 40px;
@@ -110,6 +120,7 @@ export default class PlayerSongItem extends Vue {
   }
 
   &__duration {
+    color: #c2c2c2;
     font-size: 14px;
   }
 }

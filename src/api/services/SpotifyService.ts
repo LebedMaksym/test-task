@@ -1,4 +1,4 @@
-import { spotifyInstance as axios} from "@/api/instances";
+import { spotifyInstance as axios } from "@/api/instances";
 import { SpotifySavedSongsRequest, SpotifyPlayRequest } from "@/models/SpotifyModels";
 
 export default {
@@ -8,7 +8,7 @@ export default {
         offset: payload.offset,
         limit: payload.limit,
       }
-    })
+    });
   },
 
   getRandomTrack(query : string) {
@@ -19,7 +19,7 @@ export default {
         offset: Math.floor(Math.random() * 1000),
         limit: 1
       }
-    })
+    });
   },
 
   saveSong(id: string) {
@@ -27,7 +27,7 @@ export default {
       params: {
         ids: id
       }
-    })
+    });
   },
 
   playSong(payload: SpotifyPlayRequest) {
@@ -38,7 +38,7 @@ export default {
       params: {
         device_id: payload.device_id
       }
-    })
+    });
   },
 
   pauseSong(device_id : string) {
@@ -46,6 +46,6 @@ export default {
       params : {
         device_id
       }
-    })
+    });
   }
-}
+};

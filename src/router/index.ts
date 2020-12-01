@@ -39,23 +39,21 @@ router.beforeEach(async(to, from, next) => {
     document.title = `${to.meta.title}`;
   }
   if(!auth.isAuthorized && to.name !== "Login") {
-    const accessToken = Vue.$cookies.get("accessToken")
-    const refreshToken = Vue.$cookies.get("refreshToken")
+    const accessToken = Vue.$cookies.get("accessToken");
+    const refreshToken = Vue.$cookies.get("refreshToken");
     if(refreshToken && accessToken) {
-      setAuthHeaders(accessToken)
-      auth.setAccessToken(accessToken)
-      auth.setRefreshToken(refreshToken)
-      auth.setIsAuthorized(true)
-      next()
+      setAuthHeaders(accessToken);
+      auth.setAccessToken(accessToken);
+      auth.setRefreshToken(refreshToken);
+      auth.setIsAuthorized(true);
+      next();
+    } else {
+      next({ name: "Login" });
     }
-    else {
-      next({ name: "Login" })
-    }
+  } else {
+    next();
   }
-  else {
-    next()
-  }
-})
+});
 
 
 export default router;

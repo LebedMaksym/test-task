@@ -1,15 +1,22 @@
-# 🚀 Welcome to your new awesome project!
+Test task for Genesis(Universe)
 
-This project has been created using **webpack scaffold**, you can now run
+To install dependencies, please run
+```
+npm istall
+```
+
+To run application in develop mode, please run:
+
+```
+npm run serve
+```
+
+To build application for production, please run 
 
 ```
 npm run build
 ```
 
-or
+You can check deployed version on: <br>
+`https://dry-retreat-42658.herokuapp.com`
 
-```
-yarn build
-```
-
-to bundle your application

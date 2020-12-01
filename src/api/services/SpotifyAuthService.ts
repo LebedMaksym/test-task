@@ -1,5 +1,5 @@
 import { spotifyAuthInstance as axios } from "@/api/instances";
-import {SpotifyRefreshTokenRequest, SpotifyTokenRequest} from "@/models/SpotifyModels";
+import { SpotifyRefreshTokenRequest, SpotifyTokenRequest } from "@/models/SpotifyModels";
 
 export default {
   getTokens(payload : SpotifyTokenRequest) {
@@ -10,7 +10,7 @@ export default {
           "Authorization": "Basic " + btoa(`${payload.client_id}:${payload.client_secret}`),
           "Content-Type": "application/x-www-form-urlencoded"
         }
-      })
+      });
   },
   refreshToken(payload: SpotifyRefreshTokenRequest) {
     return axios.post("/api/token",
@@ -19,6 +19,6 @@ export default {
           "Authorization": "Basic " + btoa(`${payload.client_id}:${payload.client_secret}`),
           "Content-Type": "application/x-www-form-urlencoded"
         }
-      })
+      });
   }
-}
+};

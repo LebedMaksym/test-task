@@ -1,65 +1,67 @@
 *, *:before, *:after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
 body, button {
-  font-family: 'Roboto', sans-serif;
+	font-family: 'Roboto', sans-serif;
 }
 
 .container {
-  flex: 1 0;
-  max-width: 900px;
-  margin: 0 auto;
+	flex: 1 0;
+	max-width: 900px;
+	margin: 0 auto;
 }
 
 
 .d-flex {
-  display: flex;
-  align-items: flex-start;
+	display: flex;
+	align-items: flex-start;
 }
 
 .flex-wrap {
-  flex-wrap: wrap;
+	flex-wrap: wrap;
 }
 
 .flex-column {
-  flex-direction: column;
+	flex-direction: column;
 }
 
 .justify {
-  &-space-between {
-    justify-content: space-between;
-  }
+	&-space-between {
+		justify-content: space-between;
+	}
 
-  &-center {
-    justify-content: center;
-  }
+	&-center {
+		justify-content: center;
+	}
 
-  &-end {
-    justify-content: flex-end;
-  }
+	&-end {
+		justify-content: flex-end;
+	}
 
-  &-start {
-    justify-content: flex-start;
-  }
+	&-start {
+		justify-content: flex-start;
+	}
 }
 
-.align-center {
-  align-items: center;
+.align {
+	&-center {
+		align-items: center;
+	}
+	&-end {
+		align-items: flex-end;
+	}
+}
+
+.flex-1-0 {
+	flex: 1 0 auto;
 }
 
 @include spacing('', 'margin', 'm');
 @include spacing('', 'padding', 'p');
 
-@include sm {
-  @include spacing('-sm', 'margin', 'm');
-  @include spacing('-sm', 'padding', 'p');
+.color-white {
+	color: white;
 }
-
-@include xs {
-  @include spacing('-xs', 'margin', 'm');
-  @include spacing('-xs', 'padding', 'p');
-}
-

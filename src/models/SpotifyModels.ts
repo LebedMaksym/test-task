@@ -23,48 +23,57 @@ export interface SpotifyRefreshTokenRequest {
 }
 
 export interface SpotifySavedSongsRequest {
-    offset: number,
-    limit: number,
+    offset: number;
+    limit: number;
 }
 
 export interface SpotifyPlayRequest {
-    uris: string[],
-    position_ms: number,
-    device_id: string
+    uris: string[];
+    position_ms: number;
+    device_id: string;
 }
 
 export interface SpotifySong {
-    added_at: Date,
-    track: SpotifyTrack
+    added_at: Date;
+    track: SpotifyTrack;
 }
 
 export interface SpotifyTrack {
-    id: string,
-    name: string,
-    album: SpotifyAlbum,
-    artists: SpotifyArtist[],
-    uri: string,
-    href: string,
-    type: string,
-    duration_ms: number
+    id: string;
+    name: string;
+    album: SpotifyAlbum;
+    artists: SpotifyArtist[];
+    uri: string;
+    href: string;
+    type: string;
+    duration_ms: number;
+    is_random? : boolean;
+    is_saved?: boolean;
 }
 
 export interface SpotifyAlbum {
     id: string;
-    album_type: string,
-    uri: string,
+    album_type: string;
+    uri: string;
     images: SpotifyImage[]
 }
 
 export interface SpotifyArtist {
-    id: string
-    name: string,
-    uri: string,
-    type: string
+    id: string;
+    name: string;
+    uri: string;
+    type: string;
 }
 
 export interface SpotifyImage {
-    height: number,
-    width: number,
-    url: string
+    height: number;
+    width: number;
+    url: string;
+}
+
+export interface SpotifyTrackListPagination {
+    hasNext: boolean;
+    hasPrevious: boolean;
+    total: number;
+    offset: number;
 }

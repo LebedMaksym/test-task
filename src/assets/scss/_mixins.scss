@@ -1,5 +1,11 @@
-@mixin  r($width) {
+@mixin r($width) {
   @media only screen and (max-width: $width+ "px") {
+    @content
+  }
+}
+
+@mixin xs{
+  @include r(599) {
     @content
   }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "my-webpack-project",
+  "name": "spotify-player-app",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "Spotify player app",
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack",
@@ -10,10 +10,10 @@
   "author": "Maksym Lebed",
   "license": "MIT",
   "devDependencies": {
-    "@types/spotify-web-playback-sdk": "^0.1.7",
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.12.7",
     "@types/node": "^14.14.10",
+    "@types/spotify-web-playback-sdk": "^0.1.7",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
     "@vue/eslint-config-typescript": "^7.0.0",
