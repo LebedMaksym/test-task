@@ -1,23 +1,25 @@
 module.exports = {
-  "env": {
+  env: {
     "browser": true,
     "es6": true,
     "node": true
   },
-  "extends": [
+  extends: [
     "eslint:recommended",
     "plugin:vue/essential",
-    "plugin:vue/recommended"
+    "plugin:vue/recommended",
+    "@vue/typescript/recommended",
   ],
-  "plugins": [
+  plugins: [
     "vue"
   ],
-  "rules": {
+  rules: {
     "indent": [2, 2],
     "array-element-newline": ["error", { "multiline": true, "minItems": 4 }],
     "space-before-function-paren": ["error", "never"],
     "quotes": ["error", "double"],
     "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
     "space-before-blocks": "error",
+    "@typescript-eslint/no-var-requires": [0, { properties: "never" }]
   }
 };

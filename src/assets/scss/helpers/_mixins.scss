@@ -1,46 +1,6 @@
-// width
 @mixin  r($width) {
   @media only screen and (max-width: $width+ "px") {
     @content
-  }
-}
-
-//=text-overflow
-//  overflow: hidden
-//  text-overflow: ellipsis
-//  white-space: nowrap
-
-@mixin hover {
-  .no-touch &:hover {
-    @content
-  }
-}
-
-@mixin coverdiv {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-// vertical-align at center
-@mixin vcenter {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-}
-
-
-// font-family
-@mixin font($alias, $name) {
-  @font-face {
-    font-family: $alias;
-    src: url("/fonts/" + $name + ".woff2") format("woff2"), url("/fonts/" + $name + ".woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
   }
 }
 

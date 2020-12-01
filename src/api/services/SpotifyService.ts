@@ -22,6 +22,14 @@ export default {
     })
   },
 
+  saveSong(id: string) {
+    return axios.put("me/tracks", {}, {
+      params: {
+        ids: id
+      }
+    })
+  },
+
   playSong(payload: SpotifyPlayRequest) {
     return axios.put("me/player/play", {
       uris: payload.uris,

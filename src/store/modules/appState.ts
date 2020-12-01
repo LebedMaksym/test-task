@@ -1,11 +1,12 @@
 import {
   VuexModule,
   Module,
-    Action,
+  Action,
   Mutation,
   getModule
 } from "vuex-module-decorators";
 import store from "../index";
+import auth from "@/store/modules/auth";
 
 @Module({
   name: "appState",

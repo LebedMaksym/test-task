@@ -1,22 +1,23 @@
 const path = require("path");
 const webpack = require("webpack");
-const {VueLoaderPlugin} = require("vue-loader");
+const { VueLoaderPlugin } = require("vue-loader");
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-
-console.log(process.env.NODE_ENV);
-
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
-  entry: "./src/main.js",
+  entry:  path.resolve(__dirname, "./src/main.ts"),
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
   },
   plugins: [
+    new Dotenv({
+      path: "./.env"
+    }),
     new webpack.ProgressPlugin(),
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
@@ -41,20 +42,33 @@ module.exports = {
       },
       {
         test: /.(scss|css)$/,
-        use: [
-          process.env.NODE_ENV !== "production"
-            ? "vue-style-loader"
-            : MiniCssExtractPlugin.loader,
-          "css-loader"
-        ]
-      }]
+        use: process.env.NODE_ENV === "production" ?
+          [ MiniCssExtractPlugin.loader, "css-loader", "sass-loader"] :
+          ["vue-style-loader",
+            "style-loader",
+            "css-loader",
+            "sass-loader",
+          ]
+      },
+      {
+        test: /\.ts$/,
+        loader: "ts-loader",
+        options: { appendTsSuffixTo: [/\.vue$/] }
+      }
+    ]
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+    alias: {
+      "@": path.resolve(__dirname, "src")
+    }
   },
   optimization: {
     minimize: true,
     minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
     splitChunks: {
       chunks: "async",
-      maxSize: 220000,
+      maxSize: 200000,
       minChunks: 1,
       automaticNameDelimiter: "~",
       cacheGroups: {
@@ -74,6 +88,8 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
+    historyApiFallback: true,
     port: 8080
-  }
+  },
+  devtool: process.env.NODE_ENV !== "production" ? "eval-cheap-source-map" : false
 }

@@ -1,5 +1,5 @@
-import axiosInstance from "@/api/instances";
+import { spotifyInstance } from "@/api/instances"
 
-export default function(jwt: string) {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+export default function(accessToken: string) {
+  spotifyInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 }

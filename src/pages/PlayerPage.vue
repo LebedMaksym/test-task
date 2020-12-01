@@ -1,86 +1,136 @@
 <template>
-  <div>
-    <button @click="play">
-      >
+  <div class="container pa-5">
+    <player-song-item
+      v-for="song in songsList"
+      :key="song.track.id"
+      :track="song.track"
+      @click="songItemControlHandler(song.track)"
+    />
+    <player-controls
+      v-if="currentTrack"
+      @slider-update="sliderUpdatedHandler"
+    />
+    <button @click="getRandomTrack">
+      Get random track
     </button>
+    <div v-if="currentRandomTrack">
+      <div>
+        {{ currentRandomTrack.name }}
+      </div>
+      <div>
+        {{ currentRandomTrack.artists[0].name }}
+      </div>
+      <button @click="saveSong(currentRandomTrack.id)">
+        like
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator"
-import LibraryService from "@/api/LibraryService";
-import auth from "@/store/modules/auth";
-import SpotifyPlayerLoader from "@/utils/SpotifyPlayerLoader";
-import axiosInstance from "@/api/instance";
+import player from "@/store/modules/player";
+import { SpotifyTrack, SpotifySong } from "@/models/SpotifyModels";
+import BaseButton from "@/components/BaseButton.vue";
+import PlayerSongItem from "@/components/player-page/PlayerSongItem.vue";
+import PlayerControls from "@/components/player-page/PlayerControls.vue";
 
-@Component
-export default class MainPage extends Vue {
-  songs = []
-  currentDeviceId = ""
+@Component({
+  components: {
+    PlayerControls,
+    PlayerSongItem,
+    BaseButton
 
-  async waitForSpotifyWebPlaybackSDKToLoad() {
-    return new Promise(resolve => {
-      if (window.Spotify) {
-        resolve(window.Spotify)
-      } else {
-        window.onSpotifyWebPlaybackSDKReady = () => {
-          resolve(window.Spotify)
+  }
+})
+export default class PlayerPage extends Vue {
+    loading = false
+    interval: any = 0
+
+    get songsList() : SpotifySong[] {
+      return player.songsList
+    }
+    get currentRandomTrack() : SpotifyTrack | null {
+      return player.currentRandomTrack
+    }
+
+    get currentTrack() : SpotifyTrack | null {
+      return player.currentTrack
+    }
+
+    get isSongPlaying(): boolean {
+      return player.isSongPlaying
+    }
+
+    startBouncer() {
+      const currentTrackDuration = this.currentTrack?.duration_ms || 0
+      this.interval = setInterval(() => {
+        if(player.currentTrackProgressTime + 500 >= currentTrackDuration ) {
+          player.setCurrentTrackProgressTime(currentTrackDuration)
+          player.setCurrentTrackProgressTime(0)
+          player.setIsSongPlaying(false)
+          clearInterval(this.interval)
+          return
+        }
+        player.setCurrentTrackProgressTime(player.currentTrackProgressTime + 500)
+      }, 500)
+    }
+
+    async sliderUpdatedHandler(progress: number) {
+      clearInterval(this.interval)
+      const success = await player.playSong()
+      if(success) {
+        this.startBouncer()
+      }
+    }
+
+    async songItemControlHandler(track: SpotifyTrack) {
+      const isCurrentTrack = this.currentTrack && this.currentTrack.id === track.id
+      if(isCurrentTrack && this.isSongPlaying) {
+        const success = await player.pauseSong()
+        if(success) {
+          clearInterval(this.interval)
         }
       }
-    })
-  }
+      else if(isCurrentTrack && !this.isSongPlaying) {
+        const success = await player.playSong()
+        if(success) {
+          this.startBouncer()
+        }
+      }
+      else {
+        clearInterval(this.interval)
+        player.setCurrentTrack(track)
+        player.setCurrentTrackProgressTime(0)
+        const success = await player.playSong()
+        if(success) {
+          this.startBouncer()
+        }
+      }
+    }
 
-  async initiatePlayer() {
-    const { Player } = await this.waitForSpotifyWebPlaybackSDKToLoad()
-    const sdk = new Player({
-      name: "Test Web Playback SDK",
-      volume: 1.0,
-      getOAuthToken: callback => { callback(auth.accessToken) }
-    })
-    // Error handling
-    sdk.addListener("initialization_error", ({ message }) => { console.log("Initialization_error: " + message) })
-    sdk.addListener("authentication_error", ({ message }) => { console.log("Authentication_error: " + message) })
-    sdk.addListener("account_error", ({ message }) => { console.log("Account_error: " + message) })
-    sdk.addListener("playback_error", ({ message }) => { console.log("Playback_error: " + message) })
-    // Playback status updates
-    sdk.addListener("player_state_changed", state => {
-      // Update UI information on player state changed
-    })
-    // Ready
-    sdk.addListener("ready", ({ device_id }) => {
-      this.currentDeviceId = device_id
-      console.log(device_id);
-      console.log("Ready with Device Id: ", device_id)
-    })
-    // Not Ready
-    sdk.addListener("not_ready", ({ device_id }) => {
-      console.log("Not ready with device Id: ", device_id)
-    })
-    sdk.connect()
-  }
 
-  async created() {
-    const response = await LibraryService.getSavedSongs({
-      offset: 0,
-      limit: 20
-    })
+    getRandomTrack() {
+      player.getRandomTrack()
+    }
 
-    const ms = Date.now()
-    await SpotifyPlayerLoader()
-    console.log(Date.now() - ms)
-    this.songs = response.data.items;
-    console.log(this.songs);
-    await  this.initiatePlayer()
+    async saveSong(id: string) {
+      await player.saveSong(id)
+      await player.getSongsList({
+        offset: 0,
+        limit: 10
+      })
+    }
 
-  }
-  async play() {
-    console.log(this.songs[0].track.uri);
-    await axiosInstance.put("https://api.spotify.com/v1/me/player/play", {
-      uris: [this.songs[0].track.uri]
-    }, { params : {
-      device_id : this.currentDeviceId
-    }})
-  }
+    async created() : Promise<void>  {
+      this.loading = true
+      await player.getSongsList({
+        offset: 0,
+        limit: 10
+      })
+      this.loading = false
+    }
+
 }
 </script>
 
