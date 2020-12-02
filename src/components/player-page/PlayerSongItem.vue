@@ -72,7 +72,7 @@ export default class PlayerSongItem extends Vue {
   }
 
   get disableButton(): boolean {
-    return !player.currentDeviceId || player.isLoading;
+    return !player.currentDeviceId || player.isLoading || player.isPlaybackLoading;
   }
 
   get btnDetails(): BtnDetails {

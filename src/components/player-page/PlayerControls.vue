@@ -24,6 +24,7 @@
       <div class="d-flex justify-center">
         <base-button
           is-icon
+          :is-disabled="isPlaybackLoading"
           border-color="white"
           color="transparent"
           @click="$emit('click')"
@@ -37,6 +38,7 @@
         <span class="player-controls__time mr-3">{{ $parseDuration(currentProgressTime) }}</span>
         <vue-slider
           v-model="currentProgressTime"
+          :disabled="isPlaybackLoading"
           :max="currentTrack.duration_ms"
           :dot-size="10"
           tooltip="none"
@@ -84,6 +86,10 @@ export default class PlayerControls extends Vue {
 
   get currentTrack(): SpotifyTrack | null {
     return player.currentTrack;
+  }
+
+  get isPlaybackLoading() : boolean {
+    return player.isPlaybackLoading;
   }
 
   get isSongPlaying(): boolean {

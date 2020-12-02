@@ -4,10 +4,14 @@ import {
   getModule,
   Action, Mutation,
 } from "vuex-module-decorators";
+import {
+  SpotifySavedSongsRequest,
+  SpotifySong, SpotifyTrack,
+  SpotifyTrackListPagination
+} from "@/models/SpotifyModels";
+import SpotifyService from "@/api/services/SpotifyService";
 import store from "@/store/index";
 import auth from "@/store/modules/auth";
-import SpotifyService from "@/api/services/SpotifyService";
-import { SpotifySavedSongsRequest, SpotifySong, SpotifyTrack, SpotifyTrackListPagination } from "@/models/SpotifyModels";
 import appState from "@/store/modules/appState";
 
 @Module({
@@ -25,6 +29,7 @@ class Player extends VuexModule {
     isSongPlaying = false
     songsList: SpotifySong[] = []
     isLoading = false
+    isPlaybackLoading = false
     pagination: SpotifyTrackListPagination = {
       hasNext: false,
       hasPrevious: false,
@@ -35,6 +40,11 @@ class Player extends VuexModule {
     @Mutation
     setLoading(isLoading: boolean) {
       this.isLoading = isLoading;
+    }
+
+    @Mutation
+    setPaybackLoading(isPlaybackLoading: boolean) {
+      this.isPlaybackLoading = isPlaybackLoading;
     }
 
     @Mutation
@@ -76,15 +86,18 @@ class Player extends VuexModule {
     async playSong() {
       try {
         if (this.currentTrack) {
+          this.setPaybackLoading(true);
           await SpotifyService.playSong({
             device_id: this.currentDeviceId,
             uris: [this.currentTrack.uri],
             position_ms: this.currentTrackProgressTime,
           });
           this.setIsSongPlaying(true);
+          this.setPaybackLoading(false);
           return true;
         }
       } catch {
+        this.setPaybackLoading(false);
         return false;
       }
     }
@@ -92,16 +105,20 @@ class Player extends VuexModule {
     @Action
     async pauseSong() {
       try {
+        this.setPaybackLoading(true);
         await SpotifyService.pauseSong(this.currentDeviceId);
         this.setIsSongPlaying(false);
+        this.setPaybackLoading(false);
         return true;
       } catch(e) {
+        this.setPaybackLoading(true);
         return false;
       }
     }
 
     @Action({ commit: "setRandomSong" })
     async getRandomTrack() {
+      this.setPaybackLoading(true);
       const characters = "abcdefghijklmnopqrstuvwxyz";
       const randomCharacter = characters.charAt(Math.floor(Math.random() * characters.length));
       let randomSearch = "";
@@ -114,13 +131,14 @@ class Player extends VuexModule {
         randomSearch = "%" + randomCharacter + "%";
         break;
       }
-
       try {
         const response = await SpotifyService.getRandomTrack(randomSearch);
         if (response.data.tracks.items.length) {
           return response.data.tracks.items[0];
         }
+        this.setPaybackLoading(false);
       } catch (e) {
+        this.setPaybackLoading(false);
         appState.setNotification({
           message: e.message || e.toString(),
           showMessage: true
@@ -174,13 +192,6 @@ class Player extends VuexModule {
       });
       player.addListener("ready", ({ device_id }: Spotify.WebPlaybackInstance) => {
         this.setCurrentDeviceId(device_id);
-      });
-
-      player.addListener("not_ready", () => {
-        appState.setNotification({
-          message: "Unable connect to Spotify player",
-          showMessage: true
-        });
       });
       await player.connect();
     }

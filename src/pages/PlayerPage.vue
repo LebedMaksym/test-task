@@ -16,7 +16,7 @@
     <template v-else>
       <div class="d-flex justify-center">
         <base-button
-          :is-disabled="!currentDeviceId || loading"
+          :is-disabled="!currentDeviceId || loading || isPlaybackLoading"
           color="transparent"
           border-color="white"
           text="Play random track"
@@ -81,6 +81,10 @@ export default class PlayerPage extends Vue {
 
   get loading(): boolean {
     return player.isLoading;
+  }
+
+  get isPlaybackLoading() : boolean {
+    return player.isPlaybackLoading;
   }
 
   get currentDeviceId(): string {
