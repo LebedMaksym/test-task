@@ -183,6 +183,7 @@ class Player extends VuexModule {
           }
         });
       };
+      this.setCurrentDeviceId("");
       const spotify: any = await waitForSpotifyWebPlaybackSDKToLoad();
       const player = new spotify.Player({
         name: "Spotify Player",

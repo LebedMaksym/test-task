@@ -57,9 +57,9 @@ class Auth extends VuexModule {
         const response = await AuthService.getTokens(payload);
         this.setAccessToken(response.data.access_token);
         this.setRefreshToken(response.data.refresh_token);
-        this.setIsAuthorized(true);
         Vue.$cookies.set("accessToken", this.accessToken);
         Vue.$cookies.set("refreshToken", this.refreshToken);
+        this.setIsAuthorized(true);
         setAuthHeaders(this.accessToken);
       } catch(e) {
         appState.setNotification({

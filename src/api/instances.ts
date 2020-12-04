@@ -3,6 +3,7 @@ import auth from "@/store/modules/auth";
 import Vue from "vue";
 import router from "@/router";
 import setAuthHeaders from "@/api/setAuthHeaders";
+import player from "@/store/modules/player";
 
 export const spotifyAuthInstance = axios.create({
   baseURL: process.env.SPOTIFY_BASE_AUTH_API_URL
@@ -36,8 +37,10 @@ spotifyInstance.interceptors.response.use(
         });
         if(accessToken) {
           Vue.$cookies.set("accessToken", accessToken);
+          auth.setAccessToken(accessToken);
           setAuthHeaders(accessToken);
           error.config.headers["Authorization"] = "Bearer " + accessToken;
+          player.initPlayer();
           return  spotifyInstance.request(error.config);
         } else {
           auth.setIsAuthorized(false);
