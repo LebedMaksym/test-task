@@ -1,5 +1,3 @@
-Test task for Genesis(Universe)
-
 To install dependencies, please run
 ```
 npm istall
